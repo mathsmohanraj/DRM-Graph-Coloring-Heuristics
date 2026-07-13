@@ -22,3 +22,11 @@ The heuristic algorithm was tested against varying network sizes to evaluate its
 2. Install the required dependencies:
    ```bash
    pip install networkx
+
+   python drm_simulation.py
+
+   M.Mohanraj
+
+Department of Mathematics, Periyar Maniammai Institute of Science & Technology
+
+Research Focus: Graph Theory, Algorithmic Complexity, and Graph Coloring Heuristics.
