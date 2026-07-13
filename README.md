@@ -1,2 +1,24 @@
-# DRM-Graph-Coloring-Heuristics
-Python implementation of Dynamic Graph Coloring Heuristics for Real-Time DRM Conflict Resolution.
+# Dynamic Graph Coloring Heuristics for Real-Time DRM Conflict Resolution
+
+## Overview
+This repository contains the Python implementation (`NetworkX`) of a dynamic graph coloring heuristic model designed for real-time Digital Rights Management (DRM) conflict resolution in large-scale digital media platforms. 
+
+By modeling media assets as vertices and detected copyright claims as dynamically weighted edges, this algorithm assigns discrete chromatic values (Green, Yellow, Red) to instantly execute specific DRM policies such as monetization, revenue sharing, and global takedowns.
+
+## Experimental Results
+The heuristic algorithm was tested against varying network sizes to evaluate its real-time performance and scalability. The localized recoloring approach ensures that processing time scales linearly.
+
+| Test Case          | Total Nodes (|V|) | Active Conflicts (|E|) | Nodes Recolored | Execution Time (ms) |
+|--------------------|-------------------|------------------------|-----------------|---------------------|
+| 1. Small Network   | 1,000             | 150                    | 90              | 0.66 ms             |
+| 2. Shorts Mashup   | 10,000            | 2,400                  | 1,356           | 9.36 ms             |
+| 3. Live Broadcast  | 50,000            | 8,500                  | 4,970           | 67.88 ms            |
+| 4. Global Scale    | 100,000           | 15,000                 | 8,711           | 80.05 ms            |
+
+*Note: Execution times may vary slightly based on hardware specifications, but the algorithmic complexity remains bounded by O(Δ(v)).*
+
+## How to Run the Simulation
+1. Ensure you have Python installed (3.8+ recommended).
+2. Install the required dependencies:
+   ```bash
+   pip install networkx
