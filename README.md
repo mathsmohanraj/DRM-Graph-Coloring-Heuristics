@@ -6,7 +6,7 @@ This repository contains the Python implementation (using `NetworkX`) of a dynam
 By modeling media assets as vertices and detected copyright claims as dynamically weighted edges, this algorithm assigns discrete chromatic values (Green, Yellow, Red) to instantly execute specific DRM policies such as monetization, revenue sharing, and global takedowns using the **Maximal Penalty Principle**.
 
 ## Experimental Results
-The heuristic algorithm was tested against varying network sizes to evaluate its real-time performance and scalability. The localized recoloring approach ensures that processing time scales linearly ($O(\Delta(v))$).
+The heuristic algorithm was tested against varying network sizes to evaluate its real-time performance and scalability. The localized recoloring approach ensures that processing time scales linearly O(Δ(v)).
 
 | Test Case | Nodes ($\|V\|$) | Conflicts ($\|E\|$) | Nodes Recolored | Execution Time (ms) |
 | :--- | :--- | :--- | :--- | :--- |
