@@ -4,31 +4,32 @@ import random
 
 def run_drm_simulation(num_total_nodes, num_conflicts):
     """
-    Simulates the YouTube DRM Network using Graph Coloring Heuristics.
+    Simulates the YouTube DRM Network using Graph Coloring Heuristics 
+    with Maximal Penalty Principle (Updated Algorithm 1).
     Returns the number of recolored nodes and execution time in milliseconds.
     """
     G = nx.Graph()
-    
+
     # 1. Nodes Generation
-    # 20% Original Nodes (Rights Holders), 80% Derivative Nodes (Users)
+    # 20% Original Nodes (Copyright Owners), 80% Derivative Nodes (Users/Uploaders)
     num_vo = int(num_total_nodes * 0.2)
     num_vd = num_total_nodes - num_vo
-    
+
     vo_nodes = [f"O_{i}" for i in range(num_vo)]
     vd_nodes = [f"D_{i}" for i in range(num_vd)]
-    
-    # Assign policies to original rights holders (Whitelist, Revenue Share, Takedown)
+
+    # Assign policies to original owners (Whitelist, Revenue Share, Takedown)
     policies = ["Whitelist", "Revenue Share", "Takedown"]
     for u in vo_nodes:
         # Takedown (30%), Revenue Share (50%), Whitelist (20%)
         assigned_policy = random.choices(policies, weights=[0.2, 0.5, 0.3])[0]
         G.add_node(u, type='Original', policy=assigned_policy)
-        
-    # Assign default 'Green' color to user derivative nodes
+
+    # Assign initial color 'Green' to derivative videos (users' uploads)
     for v in vd_nodes:
         G.add_node(v, type='Derivative', color='Green')
-        
-    # 2. Generate fuzzy conflict edges representing copyright overlaps
+
+    # 2. Create copyright infringement links (Fuzzy Conflict Edges)
     edges_added = 0
     while edges_added < num_conflicts:
         u = random.choice(vo_nodes)
@@ -39,44 +40,52 @@ def run_drm_simulation(num_total_nodes, num_conflicts):
             edges_added += 1
 
     # =======================================================
-    # ALGORITHM 1: Dynamic Chromatic Assignment
+    # ALGORITHM 1: Dynamic Chromatic Assignment (Updated)
     # =======================================================
     start_time = time.time()
-    
-    threshold = 0.3 # tau (Fuzzy/Temporal Threshold)
+
+    threshold = 0.3 # tau (Fuzzy Threshold)
     recolored_count = 0
-    
+
     for v in vd_nodes:
+        final_color = 'Green' # Default state is Green
+        claimants = [] # Initialize Claimants
+        
+        # Step 1: Detect all overlaps and collect Claimants
         neighbors = list(G.neighbors(v))
-        if not neighbors:
-            continue # No conflict detected, remains Green.
-            
-        final_color = 'Green'
         for u in neighbors:
             w = G[u][v]['weight']
-            if w >= threshold: # Conflict confirmed
-                policy = G.nodes[u]['policy']
-                
-                if policy == "Whitelist":
-                    continue # Licensed content, remains Green
-                elif policy == "Revenue Share":
-                    final_color = 'Yellow' # Revenue sharing
-                elif policy == "Takedown":
-                    final_color = 'Red' # Immediate takedown
-                    break # Stop scanning further once a Red policy is hit (Heuristic optimization)
-        
-        # Update node color if changed
+            if w >= threshold: # Conflict Detected
+                claimants.append(u)
+
+        # If no conflicts, proceed to the next node
+        if not claimants:
+            continue
+
+        # Step 2: Apply Maximal Penalty Principle
+        for u in claimants:
+            policy = G.nodes[u]['policy']
+
+            if policy == "Takedown":
+                final_color = 'Red' # Immediate Red
+                break # Overrides all other policies (stop checking once Red is assigned)
+            
+            elif policy == "Revenue Share" and final_color != 'Red':
+                final_color = 'Yellow' # Change to Yellow
+                # (Fractional splitting logic can be added here mathematically)
+
+        # Step 3: Update the node's color if it has changed
         if final_color != 'Green':
             G.nodes[v]['color'] = final_color
             recolored_count += 1
-            
+
     end_time = time.time()
     # =======================================================
-    
+
     execution_time_ms = (end_time - start_time) * 1000
     return recolored_count, execution_time_ms
 
-# 3. Running Test Cases to generate performance table
+# 3. Running Test Cases and formatting the output table
 if __name__ == "__main__":
     test_cases = [
         ("Small Network", 1000, 150),
